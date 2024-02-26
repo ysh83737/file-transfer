@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件传输助手</title>
+</head>
+<body>
+  <input type="file" name="file" id="file-inputer">
+  <script>
+    const inputer = document.querySelector('#file-inputer');
+    if (inputer) {
+      inputer.addEventListener('change', onChange);
+      window.onunload = () => inputer.removeEventListener('change', onChange);
+
+      async function onChange(event) {
+        const file = inputer.files[0];
+        if (!file) return;
+
+        doUpload(file);
+      }
+    }
+
+    async function doUpload(file) {
+      const formdata = new FormData();
+      formdata.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'post',
+        body: formdata,
+      });
+      const { success, message } = await res.json();
+      inputer.value = '';
+      alert(message);
+    }
+  </script>
+</body>
+</html>
